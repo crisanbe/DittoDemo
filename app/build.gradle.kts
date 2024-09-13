@@ -1,3 +1,7 @@
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -21,15 +25,41 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("debug") {
+            val credsFile = project.file("secure/debug_creds.properties")
+            if (credsFile.exists()) {
+                val prop = Properties().apply {
+                    load(FileInputStream(credsFile))
+                }
+                buildConfigField("String", "APP_ID", "\"${prop["APP_ID"]}\"")
+                buildConfigField("String", "ONLINE_AUTH_TOKEN", "\"${prop["ONLINE_AUTH_TOKEN"]}\"")
+            } else {
+                throw FileNotFoundException("debug_creds.properties not found in secure directory.")
+            }
+        }
+
+        getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+            val credsFile = project.file("secure/release_creds.properties")
+            if (credsFile.exists()) {
+                val prop = Properties().apply {
+                    load(FileInputStream(credsFile))
+                }
+                buildConfigField("String", "APP_ID", "\"${prop["APP_ID"]}\"")
+                buildConfigField("String", "ONLINE_AUTH_TOKEN", "\"${prop["ONLINE_AUTH_TOKEN"]}\"")
+            } else {
+                throw FileNotFoundException("release_creds.properties not found in secure directory.")
+            }
         }
     }
-    compileOptions {
+
+    buildFeatures {
+        buildConfig = true // Habilita los campos personalizados de BuildConfig
+    }
+
+compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }

@@ -8,6 +8,9 @@ import live.ditto.DittoIdentity
 import live.ditto.android.DefaultAndroidDittoDependencies
 
 class MyApp : Application() {
+    // Those values should be pasted in 'gradle.properties'. See the notion page for more details.
+    private val APP_ID = BuildConfig.APP_ID
+    private val ONLINE_AUTH_TOKEN = BuildConfig.ONLINE_AUTH_TOKEN
     lateinit var ditto: Ditto
 
     override fun onCreate() {
@@ -17,8 +20,8 @@ class MyApp : Application() {
             val androidDependencies = DefaultAndroidDittoDependencies(this)
             val identity = DittoIdentity.OnlinePlayground(
                 androidDependencies,
-                appId = "f9d3e831-2c7d-4d6a-95e0-b599bef666a0",
-                token = "03036e78-bb9c-4b26-a507-a66da6b443ff"
+                appId = APP_ID,
+                token = ONLINE_AUTH_TOKEN
             )
 
             ditto = Ditto(androidDependencies, identity)
