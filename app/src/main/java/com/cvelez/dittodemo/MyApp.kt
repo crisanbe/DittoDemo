@@ -6,25 +6,25 @@ import live.ditto.Ditto
 import live.ditto.DittoError
 import live.ditto.DittoIdentity
 import live.ditto.android.DefaultAndroidDittoDependencies
+import com.cvelez.dittodemo.auth.AuthCallback
+import dagger.hilt.android.HiltAndroidApp
+import live.ditto.DittoLogLevel
+import live.ditto.DittoLogger
+import javax.inject.Inject
 
+@HiltAndroidApp
 class MyApp : Application() {
-    // Those values should be pasted in 'gradle.properties'. See the notion page for more details.
-    private val APP_ID = BuildConfig.APP_ID
-    private val ONLINE_AUTH_TOKEN = BuildConfig.ONLINE_AUTH_TOKEN
+    @Inject
     lateinit var ditto: Ditto
+
+    @Inject
+    lateinit var authCallback: AuthCallback
 
     override fun onCreate() {
         super.onCreate()
 
         try {
-            val androidDependencies = DefaultAndroidDittoDependencies(this)
-            val identity = DittoIdentity.OnlinePlayground(
-                androidDependencies,
-                appId = APP_ID,
-                token = ONLINE_AUTH_TOKEN
-            )
-
-            ditto = Ditto(androidDependencies, identity)
+            DittoLogger.minimumLogLevel = DittoLogLevel.DEBUG
             ditto.startSync()
         } catch (e: DittoError) {
             Log.e("Ditto error", e.message ?: "Unknown error")

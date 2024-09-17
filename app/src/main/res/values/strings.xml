@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">DittoDemo</string>
+    <string name="com_auth0_domain">dev-cckak674qqsn6zon.us.auth0.com</string>
+    <string name="com_auth0_client_id">DBzarA7CMpmYu0AzEThcIxEbN9CMACSv</string>
+    <string name="com_auth0_scheme">demo</string>
+    <string name="login_scopes">openid profile email</string>
+    <string name="login_audience">https://dev-cckak674qqsn6zon.us.auth0.com/api/v2/</string>
 </resources>

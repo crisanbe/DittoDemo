@@ -1,19 +1,22 @@
 package com.cvelez.dittodemo.ui
 
-import android.app.Application
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cvelez.dittodemo.MyApp
 import com.cvelez.dittodemo.data.Task
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import live.ditto.Ditto
 import live.ditto.DittoCollection
 import live.ditto.DittoLiveQuery
+import javax.inject.Inject
 
-class TaskViewModel(application: Application) : ViewModel() {
-    private val ditto = (application as MyApp).ditto
+@HiltViewModel
+class TaskViewModel @Inject constructor(
+    private val ditto: Ditto // Inyectar Ditto directamente
+) : ViewModel() {
     private val tasksCollection: DittoCollection = ditto.store.collection("tasks")
 
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
@@ -22,7 +25,6 @@ class TaskViewModel(application: Application) : ViewModel() {
     private var liveQuery: DittoLiveQuery? = null
 
     init {
-        // Observar las tareas activas (no eliminadas)
         liveQuery = tasksCollection.find("isDeleted == false").observeLocal { documents, _ ->
             _tasks.value = documents.map { doc ->
                 Task(
@@ -33,7 +35,6 @@ class TaskViewModel(application: Application) : ViewModel() {
             }
         }
 
-        // Monitorear el estado de la sincronización
         ditto.presence.observe { syncStatus ->
             Log.d("SyncStatus", syncStatus.toString())
         }

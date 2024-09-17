@@ -7,13 +7,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.cvelez.dittodemo.ui.TaskScreen
-import com.cvelez.dittodemo.ui.TaskViewModel
+import androidx.navigation.compose.rememberNavController
+import com.cvelez.dittodemo.auth.AuthCallback
+import com.cvelez.dittodemo.navegation.NavGraph
 import com.cvelez.dittodemo.ui.theme.DittoDemoTheme
+import dagger.hilt.android.AndroidEntryPoint
 import live.ditto.transports.DittoSyncPermissions
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -21,9 +28,11 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DittoDemoTheme {
+                val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    TaskScreen(
-                        viewModel = TaskViewModel(application as MyApp),
+                    NavGraph(
+                        navController = navController,
+                        startDestination = "login",
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

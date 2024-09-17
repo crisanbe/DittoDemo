@@ -1,5 +1,6 @@
 package com.cvelez.dittodemo.ui
 
+import android.app.Application
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -10,17 +11,19 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.cvelez.dittodemo.data.Task
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.imePadding
 
 @Composable
-fun TaskScreen(viewModel: TaskViewModel = viewModel(), modifier: Modifier = Modifier) {
+fun TaskScreen(viewModel: TaskViewModel = hiltViewModel(), modifier: Modifier = Modifier) {
     var taskName by remember { mutableStateOf("") }
     val tasks by viewModel.tasks.collectAsState()
 
@@ -81,8 +84,7 @@ fun TaskScreen(viewModel: TaskViewModel = viewModel(), modifier: Modifier = Modi
                         viewModel.addTask(taskName)
                         taskName = "" // Limpiar el campo
                         keyboardController?.hide() // Ocultar el teclado al agregar una tarea
-                    },
-                    modifier = Modifier.weight(1f)
+                    }, modifier = Modifier.weight(1f)
                 ) {
                     Text(text = "Agregar Tarea")
                 }
@@ -93,8 +95,7 @@ fun TaskScreen(viewModel: TaskViewModel = viewModel(), modifier: Modifier = Modi
                 Button(
                     onClick = {
                         viewModel.deleteAllTasks()
-                    },
-                    modifier = Modifier.weight(1f)
+                    }, modifier = Modifier.weight(1f)
                 ) {
                     Text(text = "Eliminar Todas las Tareas")
                 }
@@ -119,16 +120,13 @@ fun TaskItem(task: Task, onDeleteTask: (Task) -> Unit, modifier: Modifier = Modi
         ) {
             Column {
                 Text(
-                    text = task.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontSize = 18.sp
+                    text = task.name, style = MaterialTheme.typography.bodyLarge, fontSize = 18.sp
                 )
             }
 
             IconButton(onClick = { onDeleteTask(task) }) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar tarea"
+                    imageVector = Icons.Default.Delete, contentDescription = "Eliminar tarea"
                 )
             }
         }

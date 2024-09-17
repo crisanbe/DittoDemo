@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -34,7 +33,9 @@
 
     <application
         android:name=".MyApp"
+        android:enableOnBackInvokedCallback="true"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -55,7 +56,17 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Configuración de Auth0 -->
+            <meta-data
+                android:name="com.auth0.client_id"
+                android:value="DBzarA7CMpmYu0AzEThcIxEbN9CMACSv" />
+            <meta-data
+                android:name="com.auth0.domain"
+                android:value="${auth0Domain}" />
+            <meta-data
+                android:name="com.auth0.scheme"
+                android:value="${auth0Scheme}" />
         </activity>
     </application>
-
 </manifest>

@@ -5,6 +5,8 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -22,6 +24,10 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        // Define your manifest placeholders here
+        manifestPlaceholders["auth0Domain"] = "dev-cckak674qqsn6zon.us.auth0.com"
+        manifestPlaceholders["auth0Scheme"] = "demo"
     }
 
     buildTypes {
@@ -59,7 +65,7 @@ android {
         buildConfig = true // Habilita los campos personalizados de BuildConfig
     }
 
-compileOptions {
+    compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -80,7 +86,7 @@ compileOptions {
 }
 
 dependencies {
-
+    // SDK de Auth0
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -89,6 +95,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -97,7 +104,15 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation("live.ditto:ditto:4.8.0")
+    implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt (libs.dagger.hilt.compiler)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+    implementation("androidx.navigation:navigation-compose:2.8.0") // Cambia la versión según sea necesario
+
+    implementation(libs.ditto)
+    implementation(libs.auth0)
     implementation("com.google.accompanist:accompanist-insets:0.28.0")
 
     implementation("androidx.core:core-ktx:1.13.1")
