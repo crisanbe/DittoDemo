@@ -1,4 +1,4 @@
-package com.cvelez.dittodemo.auth
+package com.cvelez.dittodemo.feature.auth
 
 import android.util.Log
 import com.auth0.android.result.Credentials

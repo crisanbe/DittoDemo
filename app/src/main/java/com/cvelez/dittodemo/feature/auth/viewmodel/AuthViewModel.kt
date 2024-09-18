@@ -1,4 +1,4 @@
-package com.cvelez.dittodemo.auth
+package com.cvelez.dittodemo.feature.auth.viewmodel
 
 import android.content.Context
 import android.util.Log
@@ -8,20 +8,24 @@ import androidx.lifecycle.viewModelScope
 import com.auth0.android.Auth0
 import com.auth0.android.authentication.AuthenticationAPIClient
 import com.auth0.android.authentication.AuthenticationException
-import com.auth0.android.result.UserProfile
 import com.auth0.android.callback.Callback
-import com.auth0.android.provider.WebAuthProvider
 import com.auth0.android.result.Credentials
+import com.auth0.android.result.UserProfile
+import com.auth0.android.provider.WebAuthProvider
+import com.cvelez.dittodemo.domain.usecase.AuthenticateUseCase
+import com.cvelez.dittodemo.feature.auth.AuthCallback
+import com.cvelez.dittodemo.feature.auth.state.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.net.HttpURLConnection
-import java.net.URL
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val authCallback: AuthCallback) : ViewModel() {
+class AuthViewModel @Inject constructor(
+    private val authCallback: AuthCallback,
+    private val authenticateUseCase: AuthenticateUseCase
+) : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.LoggedOut)
     val authState: StateFlow<AuthState> = _authState
 
@@ -29,12 +33,8 @@ class AuthViewModel @Inject constructor(private val authCallback: AuthCallback) 
     private var cachedCredentials: Credentials? = null
     private var cachedUserProfile: UserProfile? = null
 
-
     fun login(context: Context, onSuccess: (Boolean) -> Unit) {
         viewModelScope.launch {
-            // Verificar la URL del servidor antes de iniciar sesión
-            checkServerUrl("https://dev-cckak674qqsn6zon.us.auth0.com/api/v2/")
-
             WebAuthProvider.login(account)
                 .withScheme("demo")
                 .withScope("openid profile email")
@@ -51,7 +51,14 @@ class AuthViewModel @Inject constructor(private val authCallback: AuthCallback) 
                     override fun onSuccess(credentials: Credentials) {
                         cachedCredentials = credentials
                         authCallback.setCredentials(credentials) // Asegúrate de que esto se llame
-                        Toast.makeText(context, "Login successful with token: ${credentials.accessToken}", Toast.LENGTH_SHORT).show()
+                        launch {
+                            authenticateUseCase.execute(credentials) // Guarda el token usando el caso de uso
+                        }
+                        Toast.makeText(
+                            context,
+                            "Login successful with token: ${credentials.accessToken}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         _authState.value = AuthState.LoggedIn(credentials.accessToken)
                         fetchUserProfile()
                         onSuccess(true)
@@ -65,7 +72,8 @@ class AuthViewModel @Inject constructor(private val authCallback: AuthCallback) 
             val client = AuthenticationAPIClient(account)
             client.userInfo(credentials.accessToken).start(object : Callback<UserProfile, AuthenticationException> {
                 override fun onFailure(exception: AuthenticationException) {
-                    _authState.value = AuthState.Error("Failed to load profile: ${exception.message}")
+                    _authState.value =
+                        AuthState.Error("Failed to load profile: ${exception.message}")
                 }
 
                 override fun onSuccess(profile: UserProfile) {
@@ -91,23 +99,4 @@ class AuthViewModel @Inject constructor(private val authCallback: AuthCallback) 
                 }
             })
     }
-
-    private fun checkServerUrl(url: String) {
-        try {
-            val connection = URL(url).openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
-            connection.connect()
-            val responseCode = connection.responseCode
-            Log.d("AuthViewModel", "Server URL check response code: $responseCode")
-        } catch (e: Exception) {
-            Log.e("AuthViewModel", "Failed to connect to server: ${e.message}")
-        }
-    }
-}
-
-sealed class AuthState {
-    object LoggedOut : AuthState()
-    data class LoggedIn(val token: String) : AuthState()
-    data class ProfileLoaded(val profile: UserProfile) : AuthState()
-    data class Error(val message: String) : AuthState()
 }

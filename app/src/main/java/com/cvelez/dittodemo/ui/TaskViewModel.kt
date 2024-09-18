@@ -3,7 +3,7 @@ package com.cvelez.dittodemo.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.cvelez.dittodemo.data.Task
+import com.cvelez.dittodemo.data.remote.Task
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

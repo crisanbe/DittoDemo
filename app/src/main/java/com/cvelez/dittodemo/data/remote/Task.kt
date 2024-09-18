@@ -1,4 +1,4 @@
-package com.cvelez.dittodemo.data
+package com.cvelez.dittodemo.data.remote
 
 // Task.kt
 data class Task(

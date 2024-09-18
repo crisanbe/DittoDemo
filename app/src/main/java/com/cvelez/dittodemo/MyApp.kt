@@ -6,7 +6,7 @@ import live.ditto.Ditto
 import live.ditto.DittoError
 import live.ditto.DittoIdentity
 import live.ditto.android.DefaultAndroidDittoDependencies
-import com.cvelez.dittodemo.auth.AuthCallback
+import com.cvelez.dittodemo.feature.auth.AuthCallback
 import dagger.hilt.android.HiltAndroidApp
 import live.ditto.DittoLogLevel
 import live.ditto.DittoLogger

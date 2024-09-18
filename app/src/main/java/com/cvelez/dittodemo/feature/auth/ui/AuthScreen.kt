@@ -1,4 +1,4 @@
-package com.cvelez.dittodemo.auth
+package com.cvelez.dittodemo.feature.auth.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,8 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.cvelez.dittodemo.feature.auth.state.AuthState
+import com.cvelez.dittodemo.feature.auth.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(navController: NavController, viewModel: AuthViewModel = hiltViewModel()) {
